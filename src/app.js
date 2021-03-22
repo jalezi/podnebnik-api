@@ -15,11 +15,12 @@ import {
 } from './middleware/errorHandlers.js';
 
 const nodeEnv = process.env.NODE_ENV;
-
+const isDev = nodeEnv === 'development';
+const isTest = nodeEnv !== 'test';
 const app = express();
 
-nodeEnv === 'development' && app.use(responseTime);
-nodeEnv !== 'test' && app.use(logger);
+isDev && app.use(responseTime);
+isTest && app.use(logger);
 
 app.use(bodyParser.json());
 app.use(helmet());
@@ -37,7 +38,7 @@ app.use(apiLimiter);
 app.use('/api', api);
 app.use('/healthcheck', healthcheck);
 
-nodeEnv !== 'test' && app.use(logErrors);
+isTest && app.use(logErrors);
 app.use(clientErrorHandler);
 app.use(errorHandler);
 
