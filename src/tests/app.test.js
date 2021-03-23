@@ -9,12 +9,31 @@ beforeAll(() => {
 describe('HOME', () => {
   describe('HEALTHCHECK', () => {
     it('should return 200. GET /healthcheck', async () => {
-      await server
-        .get('/healthcheck')
-        .expect(200)
-        .then(response => {
-          expect(response.body.message).toBe('OK');
-        });
+      const res = await server.get('/healthcheck');
+      expect(res.status).toBe(200);
+    });
+  });
+});
+
+describe('API', () => {
+  describe('CREATED', () => {
+    it('should return 200. GET /created', async () => {
+      const res = await server.get('/api/created');
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe('HISTORICAL', () => {
+    it('should return 200. GET /historical', async () => {
+      const res = await server.get('/api/historical');
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe('PROJECTIONS', () => {
+    it('should return 200. GET /projections', async () => {
+      const res = await server.get('/api/projections');
+      expect(res.status).toBe(200);
     });
   });
 });
