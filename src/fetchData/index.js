@@ -37,7 +37,7 @@ const csvToJSON = (data = [], header = []) => {
       }, {});
       return lineResult;
     } catch (error) {
-      return [{ msg: error.message, ...error }];
+      return { error: { msg: error.message, ...error } };
     }
   });
   return result;
@@ -53,7 +53,7 @@ const getJSON = (acc, [key, data]) => {
     acc[key] = csvToJSON(dataLines, header).sort(mapSortByYearAsc);
     return acc;
   } catch (error) {
-    acc[key] = { key, msg: error.message, ...error };
+    acc[key] = [{ key, ...error }];
     return acc;
   }
 };
