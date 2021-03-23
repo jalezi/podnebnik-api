@@ -3,7 +3,7 @@ import ValidationError, {
   DataError,
   QueryError,
 } from './ValidationsError/index.js';
-export { ValidationError };
+export { ValidationError, DataError, QueryError };
 
 ApplicationError.ValidationError = ValidationError;
 ApplicationError.DataError = DataError;
