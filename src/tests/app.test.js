@@ -9,12 +9,8 @@ beforeAll(() => {
 describe('HOME', () => {
   describe('HEALTHCHECK', () => {
     it('should return 200. GET /healthcheck', async () => {
-      await server
-        .get('/healthcheck')
-        .expect(200)
-        .then(response => {
-          expect(response.body.message).toBe('OK');
-        });
+      const res = await server.get('/healthcheck');
+      expect(res.status).toBe(200);
     });
   });
 });
