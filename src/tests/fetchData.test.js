@@ -1,5 +1,5 @@
-import { csvToJSON, getJSON } from '../fetchData';
-import { DataError } from '../Errors/ApplicationError';
+import { csvToJSON, getJSON, byKey } from '../fetchData/utils';
+import ApplicationError, { DataError } from '../Errors/ApplicationError';
 
 describe('fetchData', () => {
   describe('csvToJSON', () => {
@@ -73,6 +73,111 @@ describe('fetchData', () => {
       expect(Object.keys(result.myKey[0])).toHaveLength(3);
       expect(result.myKey[0]).toHaveProperty('header1');
       expect(result.myKey[0].header1).toBe('item1');
+    });
+  });
+
+  describe('byKey', () => {
+    it('should be a function - byKey', () => {
+      expect(byKey).toBeInstanceOf(Function);
+    });
+    it('should return an empty array', () => {
+      const result = byKey();
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should throw an ApplicationError if func called with wrong args', () => {
+      const func1 = jest.fn(() => byKey({}));
+      expect(func1).toThrowError(ApplicationError);
+      const func2 = jest.fn(() => byKey([], null));
+      expect(func2).toThrowError(ApplicationError);
+      const func3 = jest.fn(() => byKey([], 'something', {}));
+      expect(func3).toThrowError(ApplicationError);
+      const func4 = jest.fn(() => byKey([], 'something', [], null));
+      expect(func4).toThrowError(ApplicationError);
+    });
+
+    const input = [
+      {
+        year: '2020',
+        default: {
+          yes: 'some data',
+        },
+        someKey: {
+          yes: 'some data',
+        },
+      },
+      {
+        year: '2021',
+        default: {
+          yes: 'other data',
+        },
+        someKey: {
+          yes: 'other data',
+        },
+      },
+    ];
+    const missingProperty = [
+      {
+        year: '2020',
+        default: {
+          yes: 'some data',
+        },
+      },
+      {
+        year: '2021',
+        default: {
+          yes: 'other data',
+        },
+        someKey: {
+          yes: 'other data',
+        },
+      },
+    ];
+
+    it('should return empty array if second arg in falsy', () => {
+      const result = byKey(input);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should have different length than input', () => {
+      const result = byKey(missingProperty, 'someKey');
+      expect(result).toBeInstanceOf(Array);
+      expect(result).not.toHaveLength(missingProperty.length);
+    });
+
+    it('should return array with two items with default 2nd arg.', () => {
+      const output = [
+        { default: { yes: 'some data' } },
+        { default: { yes: 'other data' } },
+      ];
+      const result = byKey(input, 'default');
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(output);
+    });
+
+    it('should return array, length 2 with 2nd arg as key', () => {
+      const output = [
+        { someKey: { yes: 'some data', year: '2020' } },
+        { someKey: { yes: 'other data', year: '2021' } },
+      ];
+      const result = byKey(input, 'someKey', ['year']);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(output);
+    });
+
+    it('should return array, length 2 with key as 2nd arg value', () => {
+      const output = [
+        { [2020]: { default: { yes: 'some data' } } },
+        { [2021]: { default: { yes: 'other data' } } },
+      ];
+      const result = byKey(input, 'year', ['default']);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(output);
     });
   });
 });
