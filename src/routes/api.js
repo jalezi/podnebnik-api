@@ -67,26 +67,58 @@ router.use(async (req, _res, next) => {
   }
 });
 
-router.get('/historical', async (req, res, next) => {
-  const { data, query, isDefaultQuery } = req;
-  const filteredDate = isDefaultQuery ? data : getFilteredData(data, query);
+router.get('/historical', (req, res, next) => {
+  const { data, query, isDefaultQuery, created } = req;
+  const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
 
   try {
     res.json({
-      data: filteredDate,
+      data: filteredData,
     });
   } catch (error) {
     next(error);
   }
 });
 
-router.get('/projections', async (req, res, next) => {
-  const { data, query, isDefaultQuery } = req;
-  const filteredDate = isDefaultQuery ? data : getFilteredData(data, query);
+const ALLOWED_FIELDS = [
+  'total',
+  'agriculture',
+  'aviation',
+  'biomass',
+  'energy',
+  'industrial_processes',
+  'international',
+  'lulucf',
+  'waste',
+];
 
+router.get('/historical/:field', (req, res, next) => {
   try {
+    const { data, query, isDefaultQuery, created } = req;
+    if (ALLOWED_FIELDS.includes(req.params.field)) {
+      const fieldData = data[req.params.field];
+      const filteredData = isDefaultQuery
+        ? fieldData
+        : getFilteredData(fieldData, query);
+      return res.json({
+        data: filteredData,
+      });
+    }
+    return res
+      .status(404)
+      .json({ msg: 'Data for this path does not exist!', try: ALLOWED_FIELDS });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/projections', (req, res, next) => {
+  try {
+    const { data, query, isDefaultQuery, created } = req;
+    const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
+
     res.json({
-      data: filteredDate,
+      data: filteredData,
     });
   } catch (error) {
     next(error);
