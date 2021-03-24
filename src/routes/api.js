@@ -49,6 +49,7 @@ const getYearsQuery = (property, query = { yearFrom: '', yearTo: '' }) => {
   return { yearFrom, yearTo, isDefaultQuery };
 };
 
+// only for historical and projections
 router.use(async (req, _res, next) => {
   try {
     const paths = req.path.split('/').filter(item => item);
@@ -60,6 +61,7 @@ router.use(async (req, _res, next) => {
       req.isDefaultQuery = isDefaultQuery;
       const resolvedData = await data;
       req.data = resolvedData[path];
+      req.created = resolvedData.created;
     }
     next();
   } catch (error) {
@@ -74,6 +76,11 @@ router.get('/historical', (req, res, next) => {
   try {
     res.json({
       data: filteredData,
+      metadata: {
+        property: 'historical',
+        query: { ...query, isDefaultQuery },
+        created,
+      },
     });
   } catch (error) {
     next(error);
@@ -102,6 +109,11 @@ router.get('/historical/:field', (req, res, next) => {
         : getFilteredData(fieldData, query);
       return res.json({
         data: filteredData,
+        metadata: {
+          property: `historical.${req.params.field}`,
+          query: { ...query, isDefaultQuery },
+          created,
+        },
       });
     }
     return res
@@ -119,6 +131,11 @@ router.get('/projections', (req, res, next) => {
 
     res.json({
       data: filteredData,
+      metadata: {
+        property: 'projections',
+        query: { ...query, isDefaultQuery },
+        created,
+      },
     });
   } catch (error) {
     next(error);
