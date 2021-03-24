@@ -60,6 +60,38 @@ const getJSON = (acc, [key, data]) => {
 };
 
 const byKey = (data = [], property = '', include = [], setAs = '') => {
+  if (isNotArray(data)) {
+    throw new ApplicationError('First argument must be an array!');
+  }
+  if (isNotString(property)) {
+    throw new ApplicationError('Second argument must be a string!');
+  }
+  if (isNotArray(include)) {
+    throw new ApplicationError('Third argument must be an array!');
+  }
+  if (isNotString(setAs)) {
+    throw new ApplicationError('Forth argument must be string!');
+  }
+
+  const onlyWithProperty = data.filter(
+    item => isOfType.object(item) && item[property]
+  );
+
+  const result = onlyWithProperty.map(item => {
+    const additionalData = include.reduce((acc, key) => {
+      acc = { ...acc, [key]: item[key] };
+      return acc;
+    }, {});
+    if (isOfType.object(item[property])) {
+      const intermediate = setAs
+        ? { [property]: { ...additionalData, [setAs]: item[property] } }
+        : { [property]: { ...additionalData, ...item[property] } };
+
+      return intermediate;
+    }
+    return { [item[property]]: { ...additionalData } };
+  });
+  return result;
 };
 
 export { csvToJSON, getJSON, byKey };
