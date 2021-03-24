@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { Router } from 'express';
 
 import data from '../fetchData/index.js';
@@ -30,7 +31,9 @@ router.get('/created', async (req, res, next) => {
 const isInRange = (year, { min, max }) => year >= min && year <= max;
 
 const getQueryValidation = (property, query = { yearFrom: '', yearTo: '' }) => {
-  const { YEAR_FROM, YEAR_TO } = YEAR[property];
+  const { YEAR_FROM, YEAR_TO } = YEAR.hasOwnProperty(property)
+    ? YEAR[property]
+    : YEAR.minMax;
   let yearFrom =
     !isNaN(query.yearFrom) &&
     isInRange(query.yearFrom, { min: YEAR_FROM, max: YEAR_TO });
@@ -41,7 +44,9 @@ const getQueryValidation = (property, query = { yearFrom: '', yearTo: '' }) => {
 };
 
 const getYearsQuery = (property, query = { yearFrom: '', yearTo: '' }) => {
-  const { YEAR_FROM, YEAR_TO } = YEAR[property];
+  const { YEAR_FROM, YEAR_TO } = YEAR.hasOwnProperty(property)
+    ? YEAR[property]
+    : YEAR.minMax;
   const queryValidation = getQueryValidation(property, query);
   const yearFrom = queryValidation.yearFrom ? +query.yearFrom : YEAR_FROM;
   const yearTo = queryValidation.yearTo ? +query.yearTo : YEAR_TO;
@@ -54,7 +59,11 @@ router.use(async (req, _res, next) => {
   try {
     const paths = req.path.split('/').filter(item => item);
     const path = paths[0];
-    if (path === 'historical' || path === 'projections') {
+    if (
+      path === 'historical' ||
+      path === 'projections' ||
+      path === 'emissions_CO2_equiv'
+    ) {
       const { query } = req;
       const { yearFrom, yearTo, isDefaultQuery } = getYearsQuery(path, query);
       req.query = { yearFrom, yearTo };
@@ -133,6 +142,24 @@ router.get('/projections', (req, res, next) => {
       data: filteredData,
       metadata: {
         property: 'projections',
+        query: { ...query, isDefaultQuery },
+        created,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/emissions_CO2_equiv', (req, res, next) => {
+  try {
+    const { data, query, isDefaultQuery, created } = req;
+    const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
+
+    res.json({
+      data: filteredData,
+      metadata: {
+        property: 'emissions_CO2_equiv',
         query: { ...query, isDefaultQuery },
         created,
       },
