@@ -7,7 +7,9 @@ export const logErrors = (error, _req, _res, next) => {
 
 export const clientErrorHandler = (error, req, res, next) => {
   if (req.xhr) {
-    res.status(500).json({ error: 'Something failed!' });
+    res
+      .status(500)
+      .json({ error: { status: 500, message: 'Something failed!' } });
   } else {
     next(error);
   }
@@ -20,9 +22,27 @@ export const errorHandler = (error, _req, res, next) => {
       res.status(500).send(`<pre>${error.stack}</pre>`);
       return process.emit('SIGTERM');
     }
+    return res.status(error.status || 500).json({
+      error: {
+        status: error.status || 500,
+        message: error.message || 'Internal Server Error',
+      },
+    });
   }
+
   if (nodeEnv === 'production') {
-    return res.status(500).json({ error: 'Something went wrong!' });
+    return res.status(500).json({
+      error: {
+        status: 500,
+        message: 'Something went wrong!',
+      },
+    });
   }
-  next(error);
+
+  res.status(500).json({
+    error: {
+      status: error.status || 500,
+      message: error.message || 'Internal Server Error',
+    },
+  });
 };
