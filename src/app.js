@@ -27,7 +27,7 @@ app.use(helmet());
 
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -37,6 +37,12 @@ app.use(apiLimiter);
 
 app.use('/api', api);
 app.use('/healthcheck', healthcheck);
+app.use((_req, _res, next) => {
+  const error = new Error('Not found');
+  error.status = 404;
+  console.log('new error');
+  next(error);
+});
 
 isTest && app.use(logErrors);
 app.use(clientErrorHandler);

@@ -36,4 +36,10 @@ describe('API', () => {
       expect(res.status).toBe(200);
     });
   });
+  describe('EMISSIONS_CO2_EQUIV', () => {
+    it('should return 200. GET /projections', async () => {
+      const res = await server.get('/api/emissions_CO2_equiv');
+      expect(res.status).toBe(200);
+    });
+  });
 });
