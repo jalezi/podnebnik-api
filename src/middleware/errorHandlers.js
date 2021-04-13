@@ -27,8 +27,14 @@ export const errorHandler = (error, _req, res, next) => {
       },
     });
   }
+
   if (nodeEnv === 'production') {
-    return res.status(500).json({ error: 'Something went wrong!' });
+    return res.status(500).json({
+      error: {
+        status: 500,
+        message: 'Something went wrong!',
+      },
+    });
   }
   next(error);
 };
