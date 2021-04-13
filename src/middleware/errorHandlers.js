@@ -20,6 +20,12 @@ export const errorHandler = (error, _req, res, next) => {
       res.status(500).send(`<pre>${error.stack}</pre>`);
       return process.emit('SIGTERM');
     }
+    return res.status(error.status || 500).json({
+      error: {
+        status: error.status || 500,
+        message: error.message || 'Internal Server Error',
+      },
+    });
   }
   if (nodeEnv === 'production') {
     return res.status(500).json({ error: 'Something went wrong!' });
