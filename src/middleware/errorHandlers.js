@@ -7,7 +7,9 @@ export const logErrors = (error, _req, _res, next) => {
 
 export const clientErrorHandler = (error, req, res, next) => {
   if (req.xhr) {
-    res.status(500).json({ error: 'Something failed!' });
+    res
+      .status(500)
+      .json({ error: { status: 500, message: 'Something failed!' } });
   } else {
     next(error);
   }
