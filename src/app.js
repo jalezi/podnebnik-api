@@ -37,6 +37,12 @@ app.use(apiLimiter);
 
 app.use('/api', api);
 app.use('/healthcheck', healthcheck);
+app.use((_req, _res, next) => {
+  const error = new Error('Not found');
+  error.status = 404;
+  console.log('new error');
+  next(error);
+});
 
 isTest && app.use(logErrors);
 app.use(clientErrorHandler);
