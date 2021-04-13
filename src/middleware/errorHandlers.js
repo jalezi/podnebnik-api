@@ -33,8 +33,8 @@ export const errorHandler = (error, _req, res, next) => {
   if (nodeEnv === 'production') {
     return res.status(500).json({
       error: {
-        status: 500,
-        message: 'Something went wrong!',
+        status: error.status || 500,
+        message: error.message || 'Something went wrong!',
       },
     });
   }
