@@ -21,7 +21,7 @@ const getFilteredData = (data, { yearFrom, yearTo }) => {
 router.get('/created', async (req, res, next) => {
   const { created } = await data;
   try {
-    res.json({
+    return res.json({
       data: created,
     });
   } catch (error) {
