@@ -1,8 +1,9 @@
 const { NODE_ENV, PORT } = process.env;
+console.log(process.env.NODE_ENV);
 process.env.NODE_ENV = NODE_ENV ? NODE_ENV : 'development';
 const port = PORT ? PORT : 5000;
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV;
 
 const start = () => {
   import('./src/app.js')
