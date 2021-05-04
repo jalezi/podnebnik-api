@@ -16,7 +16,6 @@ export const clientErrorHandler = (error, req, res, next) => {
 };
 
 const nodeEnv = process.env.NODE_ENV;
-console.log(nodeEnv);
 export const errorHandler = (error, _req, res, next) => {
   if (nodeEnv === 'development') {
     if (error instanceof ApplicationError) {
