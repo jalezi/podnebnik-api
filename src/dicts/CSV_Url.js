@@ -1,25 +1,38 @@
 const BASE_CSV_URL = 'https://raw.githubusercontent.com';
 
-const baseURl = new URL('/podnebnik/data/master/csv/', BASE_CSV_URL);
+const baseURL = new URL('/podnebnik/data/master/', BASE_CSV_URL);
+
+const emissionsDataURL = new URL('emissions/data/', baseURL);
+
+// https://raw.githubusercontent.com/podnebnik/data/master/emissions/data/emissions.historical.agriculture.csv
 
 export const Historical_URL = {
-  total: new URL('emissions_historical.csv', baseURl),
-  agriculture: new URL('emissions_historical_agriculture.csv', baseURl),
-  aviation: new URL('emissions_historical_aviation.csv', baseURl),
-  biomass: new URL('emissions_historical_biomass.csv', baseURl),
-  energy: new URL('emissions_historical_energy.csv', baseURl),
+  total: new URL('emissions.historical.csv', emissionsDataURL),
+  agriculture: new URL(
+    'emissions.historical.agriculture.csv',
+    emissionsDataURL
+  ),
+  aviation: new URL('emissions.historical.aviation.csv', emissionsDataURL),
+  biomass: new URL('emissions.historical.biomass.csv', emissionsDataURL),
+  energy: new URL('emissions.historical.energy.csv', emissionsDataURL),
   industrial_processes: new URL(
-    'emissions_historical_industrial_processes.csv',
-    baseURl
+    'emissions.historical.industrial.processes.csv',
+    emissionsDataURL
   ),
   international: new URL(
-    'emissions_historical_industrial_processes.csv',
-    baseURl
+    'emissions.historical.industrial.processes.csv',
+    emissionsDataURL
   ),
-  lulucf: new URL('emissions_historical_industrial_processes.csv', baseURl),
-  waste: new URL('emissions_historical_industrial_processes.csv', baseURl),
+  lulucf: new URL(
+    'emissions.historical.industrial.processes.csv',
+    emissionsDataURL
+  ),
+  waste: new URL(
+    'emissions.historical.industrial.processes.csv',
+    emissionsDataURL
+  ),
 };
 
 export const Projections_URL = {
-  projections: new URL('emissions_projections.csv', baseURl),
+  projections: new URL('emissions.projections.csv', emissionsDataURL),
 };

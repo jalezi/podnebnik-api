@@ -3,6 +3,7 @@ import { Router } from 'express';
 
 import data from '../fetchData/index.js';
 import YEAR from '../dicts/Year.js';
+import ApplicationError from './../Errors/ApplicationError/index.js';
 
 const router = Router();
 
@@ -80,7 +81,17 @@ router.use(async (req, _res, next) => {
 
 router.get('/historical', (req, res, next) => {
   const { data, query, isDefaultQuery, created } = req;
-  const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
+
+  const noErrorsData = Object.values(data).filter(
+    item => !(item instanceof ApplicationError)
+  );
+  const errorsData = Object.values(data).filter(
+    item => item instanceof ApplicationError
+  );
+
+  const filteredData = isDefaultQuery
+    ? noErrorsData
+    : getFilteredData(noErrorsData, query);
 
   try {
     res.json({
@@ -90,6 +101,7 @@ router.get('/historical', (req, res, next) => {
         query: { ...query, isDefaultQuery },
         created,
       },
+      errors: errorsData,
     });
   } catch (error) {
     next(error);

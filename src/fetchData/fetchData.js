@@ -10,7 +10,26 @@ const fetchCsv = async url => {
     });
     return response.data;
   } catch (error) {
-    return error;
+    console.log({ config: error.config });
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      const {
+        response: { data, status, headers },
+      } = error;
+      console.log({ data, status, headers });
+      return new ApplicationError('Axios response error!');
+    }
+
+    if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.request);
+      return new ApplicationError('Axios request error!');
+    }
+    // Something happened in setting up the request that triggered an Error
+    throw new ApplicationError('Axios setting error' + error.message);
   }
 };
 

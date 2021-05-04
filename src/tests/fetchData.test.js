@@ -12,7 +12,7 @@ describe('fetchData', () => {
       expect(result).toHaveLength(0);
     });
     it('should throw DataError', () => {
-      expect(() => csvToJSON('x')).toThrowError(DataError);
+      expect(csvToJSON('x')).toBeInstanceOf(DataError);
     });
     it('should return array with error obj', () => {
       const result1 = csvToJSON([['value1']], ['key1', 'key2']);

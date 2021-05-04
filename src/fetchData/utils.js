@@ -10,7 +10,7 @@ const isNotString = value => !isOfType.string(value);
 
 const csvToJSON = (data = [], header = []) => {
   if (isNotArray(data) || isNotArray(header)) {
-    throw new DataError({ data, header }, 'One argument is not an Array!');
+    return new DataError({ data, header }, 'One argument is not an Array!');
   }
 
   const result = data.map(line => {
@@ -47,6 +47,11 @@ const csvToJSON = (data = [], header = []) => {
 const mapSortByYearAsc = (a, b) => a.year - b.year;
 
 const getJSON = (acc, [key, data]) => {
+  if (data instanceof ApplicationError) {
+    acc[key] = data;
+    return acc;
+  }
+
   const lines = data.split('\n').map(item => item.split(','));
   const header = lines[0];
   const dataLines = lines.slice(1, -1);
@@ -60,6 +65,10 @@ const getJSON = (acc, [key, data]) => {
 };
 
 const byKey = (data = [], property = '', include = [], setAs = '') => {
+  if (data instanceof ApplicationError) {
+    return [data];
+  }
+
   if (isNotArray(data)) {
     throw new ApplicationError('First argument must be an array!');
   }

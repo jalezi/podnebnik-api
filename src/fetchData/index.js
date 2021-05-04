@@ -1,11 +1,14 @@
 import _ from 'lodash';
 import { Historical_URL, Projections_URL } from '../dicts/CSV_Url.js';
+import ApplicationError from '../Errors/ApplicationError/ApplicationError.js';
 import fetchData from './fetchData.js';
 import { getJSON, byKey } from './utils.js';
 
 const fetchAll = async () => {
   const historicalData = await fetchData(Historical_URL);
+
   const historical = [...historicalData].reduce(getJSON, {});
+
   const historicalByEmissions = Object.entries(historical).reduce(
     (acc, [key, data]) => {
       const dataByKey = byKey(data, 'emissions_CO2_equiv', ['year'], key);
