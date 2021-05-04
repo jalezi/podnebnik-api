@@ -18,6 +18,7 @@ export const clientErrorHandler = (error, req, res, next) => {
 const nodeEnv = process.env.NODE_ENV;
 export const errorHandler = (error, _req, res, next) => {
   if (nodeEnv === 'development') {
+    console.log(`Error handling: NODE_ENV=${nodeEnv}`);
     if (error instanceof ApplicationError) {
       res.status(500).send(`<pre>${error.stack}</pre>`);
       return process.emit('SIGTERM');
@@ -31,6 +32,7 @@ export const errorHandler = (error, _req, res, next) => {
   }
 
   if (nodeEnv === 'production' || nodeEnv === 'stagging') {
+    console.log(`Error handling: NODE_ENV=${nodeEnv}`);
     return res.status(500).json({
       error: {
         status: error.status || 500,
@@ -39,6 +41,7 @@ export const errorHandler = (error, _req, res, next) => {
     });
   }
 
+  console.log(`Error handling: NODE_ENV=${nodeEnv}`);
   res.status(500).json({
     error: {
       status: error.status || 500,
