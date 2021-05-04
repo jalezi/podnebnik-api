@@ -94,7 +94,7 @@ router.get('/historical', (req, res, next) => {
     : getFilteredData(noErrorsData, query);
 
   try {
-    res.json({
+    return res.json({
       data: filteredData,
       metadata: {
         property: 'historical',
@@ -150,7 +150,7 @@ router.get('/projections', (req, res, next) => {
     const { data, query, isDefaultQuery, created } = req;
     const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
 
-    res.json({
+    return res.json({
       data: filteredData,
       metadata: {
         property: 'projections',
@@ -168,7 +168,7 @@ router.get('/emissions_CO2_equiv', (req, res, next) => {
     const { data, query, isDefaultQuery, created } = req;
     const filteredData = isDefaultQuery ? data : getFilteredData(data, query);
 
-    res.json({
+    return res.json({
       data: filteredData,
       metadata: {
         property: 'emissions_CO2_equiv',
